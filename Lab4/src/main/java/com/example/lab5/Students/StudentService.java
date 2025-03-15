@@ -18,10 +18,10 @@ import java.util.Set;
 public class StudentService {
 
     @Autowired
-    private com.example.lab5.Students.StudentRepository studentRepository;
+    private StudentRepository studentRepository;
 
     // Get all students
-    public List<com.example.lab5.Students.Student> getAllStudents() {
+    public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 

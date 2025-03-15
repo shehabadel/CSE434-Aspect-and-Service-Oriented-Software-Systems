@@ -12,17 +12,17 @@ public class UserController {
     @Autowired
     public UserService userService;
 
-    public UserController(UserService userService){
-        this.userService=userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping()
-    public List<User> getUsers(){
-       return this.userService.getUsers();
+    public List<User> getUsers() {
+        return this.userService.getUsers();
     }
 
     @PostMapping()
-    public User createUser(@RequestBody CreateUserDto createUserDto){
+    public User createUser(@RequestBody CreateUserDto createUserDto) {
         return this.userService.createUser(createUserDto);
     }
 
