@@ -12,27 +12,15 @@ services:
       - customer_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  service-customer-redis:
-    image: redis:latest
-    container_name: customer-redis
-    ports:
-      - "6381:6379"
-    volumes:
-      - customer_redis_data:/data
-    restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning
-
   service-customer:
     build: ./service-customer
     container_name: service-customer
     depends_on:
       - service-customer-pg
-      - service-customer-redis
     ports:
       - "5000:5000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@service-customer-pg:5432/service-customer
-      - REDIS_URL=redis://service-customer-redis:6379/0
     volumes:
       - ./service-customer:/app
     restart: unless-stopped
@@ -50,36 +38,21 @@ services:
       - reservation_postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  service-reservation-redis:
-    image: redis:latest
-    container_name: reservation-redis
-    ports:
-      - "6380:6379"
-    volumes:
-      - reservation_redis_data:/data
-    restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning
-
   service-reservation:
     build: ./service-reservation
     container_name: service-reservation
     depends_on:
       - service-reservation-pg
-      - service-reservation-redis
     ports:
       - "5001:5000"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-reservation-pg:5432/service-reservation
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_REDIS_HOST=service-reservation-redis
-      - SPRING_REDIS_PORT=6379
     volumes:
       - ./service-reservation:/app
     restart: unless-stopped
 
 volumes:
   customer_data:
-  customer_redis_data:
   reservation_postgres_data:
-  reservation_redis_data:
