@@ -1,6 +1,8 @@
 package com.example.service_reservation.service;
 
+import com.example.service_reservation.client.CustomerClient;
 import com.example.service_reservation.dto.CreateReservationDTO;
+import com.example.service_reservation.dto.CustomerDTO;
 import com.example.service_reservation.dto.UpdateReservationDTO;
 import com.example.service_reservation.model.Reservation;
 import com.example.service_reservation.model.ReservationStatus;
@@ -24,6 +26,9 @@ public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private CustomerClient customerClient;
+
     // Get all reservations
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -36,6 +41,12 @@ public class ReservationService {
 
     // Create a new reservation
     public Reservation createReservation(CreateReservationDTO reservationDTO) {
+        // Fetch customer details
+        CustomerDTO customer = customerClient.getCustomerById(reservationDTO.getCustomerId());
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer not found with id: " + reservationDTO.getCustomerId());
+        }
+
         // Validate that end time is after start time
         if (reservationDTO.getEndTime().isBefore(reservationDTO.getStartTime())) {
             throw new IllegalArgumentException("End time must be after start time");

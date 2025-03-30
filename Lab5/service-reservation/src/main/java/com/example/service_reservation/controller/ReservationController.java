@@ -98,12 +98,4 @@ public class ReservationController {
         List<Reservation> reservations = reservationService.findReservationsByStatus(status);
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
-
-    @GetMapping("/between")
-    public ResponseEntity<List<Reservation>> getReservationsBetweenDates(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
-        List<Reservation> reservations = reservationService.findReservationsBetweenDates(start, end);
-        return new ResponseEntity<>(reservations, HttpStatus.OK);
-    }
 } 
