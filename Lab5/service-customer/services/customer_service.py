@@ -12,6 +12,11 @@ class CustomerService:
         
         return None, False
     
+    def get_customers(self):
+        """Get all customers"""
+        customers = self.customer_repository.find_all()
+        return [customer.to_dict() for customer in customers], False
+
     def create_customer(self, name, email, phone=None):
         """Create a new customer"""
         # Check if email already exists

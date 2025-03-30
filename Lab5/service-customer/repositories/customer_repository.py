@@ -23,4 +23,8 @@ class CustomerRepository:
     def create(self, name, email, phone=None):
         """Create a new customer"""
         customer = Customer(name=name, email=email, phone=phone)
-        return self.save(customer) 
+        return self.save(customer)
+
+    def find_all(self):
+        """Find all customers"""
+        return Customer.query.all()

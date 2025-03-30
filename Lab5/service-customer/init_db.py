@@ -1,7 +1,6 @@
-from app import app, db, customer_repository
-from models import Customer  # This import will now come from models/__init__.py
+from models import db, Customer
 
-def init_database():
+def init_database(app, customer_repository):
     with app.app_context():
         # Create tables
         db.create_all()
@@ -21,7 +20,7 @@ def init_database():
                     phone='555-5678'
                 )
             ]
-            
+            # Wrong pattern, but hotfix for the example
             for customer in customers:
                 customer_repository.save(customer)
                 

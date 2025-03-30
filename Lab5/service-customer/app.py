@@ -1,11 +1,12 @@
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 import os
-from models import db
+from models import db, Customer
 from config import Config
 from repositories.customer_repository import CustomerRepository
 from services.customer_service import CustomerService
 from controllers.customer_controller import CustomerController, customer_bp
+from init_db import init_database
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -30,4 +31,5 @@ def health_check():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        init_database(app, customer_repository)
     app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)), debug=True) 

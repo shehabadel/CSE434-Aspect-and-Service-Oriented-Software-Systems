@@ -8,6 +8,7 @@ class CustomerController:
         
         # Register routes
         customer_bp.route('/customers', methods=['POST'])(self.create_customer)
+        customer_bp.route('/customers', methods=['GET'])(self.get_customers)
         customer_bp.route('/customers/<int:customer_id>', methods=['GET'])(self.get_customer)
         customer_bp.route('/customers/<int:customer_id>', methods=['PUT'])(self.update_customer)
         customer_bp.route('/customers/<int:customer_id>', methods=['DELETE'])(self.delete_customer)
@@ -37,6 +38,15 @@ class CustomerController:
         
         return jsonify(customer), 200
     
+    def get_customers(self):
+        customers, _ = self.customer_service.get_customers()
+        
+        if not customers:
+            return jsonify({"error": "No customers found"}), 404
+        
+        return jsonify(customers), 200
+
+
     def update_customer(self, customer_id):
         data = request.get_json()
         

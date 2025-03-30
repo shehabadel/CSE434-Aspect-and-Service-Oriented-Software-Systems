@@ -38,21 +38,21 @@ services:
       - reservation_postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  service-reservation:
-    build: ./service-reservation
-    container_name: service-reservation
-    depends_on:
-      - service-reservation-pg
-    ports:
-      - "5001:5000"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-reservation-pg:5432/service-reservation
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - SERVER_PORT=5000
-    volumes:
-      - ./service-reservation:/app
-    restart: unless-stopped
+  # service-reservation:
+  #   build: ./service-reservation
+  #   container_name: service-reservation
+  #   depends_on:
+  #     - service-reservation-pg
+  #   ports:
+  #     - "5001:5000"
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:postgresql://service-reservation-pg:5432/service-reservation
+  #     - SPRING_DATASOURCE_USERNAME=postgres
+  #     - SPRING_DATASOURCE_PASSWORD=postgres
+  #     - SERVER_PORT=5000
+  #   volumes:
+  #     - ./service-reservation:/app
+  #   restart: unless-stopped
 
 volumes:
   customer_data:
