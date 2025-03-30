@@ -60,6 +60,24 @@ services:
     restart: unless-stopped
     command: redis-server --save 60 1 --loglevel warning
 
+  service-reservation:
+    build: ./service-reservation
+    container_name: service-reservation
+    depends_on:
+      - service-reservation-pg
+      - service-reservation-redis
+    ports:
+      - "5001:5000"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-reservation-pg:5432/service-reservation
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_REDIS_HOST=service-reservation-redis
+      - SPRING_REDIS_PORT=6379
+    volumes:
+      - ./service-reservation:/app
+    restart: unless-stopped
+
 volumes:
   customer_data:
   customer_redis_data:
