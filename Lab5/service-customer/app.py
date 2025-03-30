@@ -1,13 +1,11 @@
 from flask import Flask, jsonify
 from flask_migrate import Migrate
-import redis
 import os
 from models import db
 from config import Config
 from repositories.customer_repository import CustomerRepository
 from services.customer_service import CustomerService
 from controllers.customer_controller import CustomerController, customer_bp
-from utils.redis_utils import RedisUtils
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,13 +14,9 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# Redis connection
-redis_client = redis.from_url(app.config['REDIS_URL'])
-
 # Initialize components
-redis_utils = RedisUtils(redis_client)
 customer_repository = CustomerRepository()
-customer_service = CustomerService(customer_repository, redis_utils)
+customer_service = CustomerService(customer_repository)
 customer_controller = CustomerController(customer_service)
 
 # Register blueprints

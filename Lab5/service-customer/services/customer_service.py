@@ -1,23 +1,14 @@
 from models import Customer
 
 class CustomerService:
-    def __init__(self, customer_repository, redis_utils):
+    def __init__(self, customer_repository):
         self.customer_repository = customer_repository
-        self.redis_utils = redis_utils
     
     def get_customer(self, customer_id):
-        """Get customer by ID with caching"""
-        # Try to get from cache first
-        cached_customer = self.redis_utils.get_customer_from_cache(customer_id)
-        if cached_customer:
-            return cached_customer, True  # Second param indicates "from cache"
-        
-        # If not in cache, get from database
+        """Get customer by ID"""
         customer = self.customer_repository.find_by_id(customer_id)
         if customer:
-            # Cache the customer data
-            self.redis_utils.set_customer_to_cache(customer)
-            return customer.to_dict(), False  # Not from cache
+            return customer.to_dict(), False
         
         return None, False
     
@@ -30,9 +21,6 @@ class CustomerService:
         
         # Create new customer
         customer = self.customer_repository.create(name, email, phone)
-        
-        # Cache the new customer
-        self.redis_utils.set_customer_to_cache(customer)
         
         return customer.to_dict(), None
     
@@ -58,10 +46,6 @@ class CustomerService:
         # Save changes
         self.customer_repository.save(customer)
         
-        # Update cache
-        self.redis_utils.invalidate_customer_cache(customer_id)
-        self.redis_utils.set_customer_to_cache(customer)
-        
         return customer.to_dict(), None
     
     def delete_customer(self, customer_id):
@@ -72,8 +56,5 @@ class CustomerService:
         
         # Delete from database
         self.customer_repository.delete(customer)
-        
-        # Invalidate cache
-        self.redis_utils.invalidate_customer_cache(customer_id)
         
         return True, None 

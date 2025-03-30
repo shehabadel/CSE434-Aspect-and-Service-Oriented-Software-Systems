@@ -30,7 +30,7 @@ class CustomerController:
         return jsonify(customer), 201
     
     def get_customer(self, customer_id):
-        customer, from_cache = self.customer_service.get_customer(customer_id)
+        customer, _ = self.customer_service.get_customer(customer_id)
         
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
