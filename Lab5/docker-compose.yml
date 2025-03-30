@@ -1,30 +1,45 @@
 services:
   service-customer-pg:
     image: postgres:latest
-    container_name: local_postgres
+    container_name: customer-pg
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: service-customer
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - customer_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   service-customer-redis:
     image: redis:latest
-    container_name: local_redis
+    container_name: customer-redis
     ports:
-      - "6379:6379"
+      - "6381:6379"
     volumes:
       - customer_redis_data:/data
     restart: unless-stopped
     command: redis-server --save 60 1 --loglevel warning
 
+  service-customer:
+    build: ./service-customer
+    container_name: service-customer
+    depends_on:
+      - service-customer-pg
+      - service-customer-redis
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@service-customer-pg:5432/service-customer
+      - REDIS_URL=redis://service-customer-redis:6379/0
+    volumes:
+      - ./service-customer:/app
+    restart: unless-stopped
+
   service-reservation-pg:
     image: postgres:latest
-    container_name: reservation_postgres
+    container_name: reservation-pg
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -37,7 +52,7 @@ services:
 
   service-reservation-redis:
     image: redis:latest
-    container_name: reservation_redis
+    container_name: reservation-redis
     ports:
       - "6380:6379"
     volumes:
