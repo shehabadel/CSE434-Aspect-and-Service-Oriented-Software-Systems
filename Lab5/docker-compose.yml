@@ -49,6 +49,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-reservation-pg:5432/service-reservation
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - SERVER_PORT=5000
     volumes:
       - ./service-reservation:/app
     restart: unless-stopped
