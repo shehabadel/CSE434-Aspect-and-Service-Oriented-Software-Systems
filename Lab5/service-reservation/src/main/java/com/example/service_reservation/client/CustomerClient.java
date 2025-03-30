@@ -2,6 +2,7 @@ package com.example.service_reservation.client;
 
 import com.example.service_reservation.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,8 +13,8 @@ public class CustomerClient {
     private final RestTemplate restTemplate;
 
     @Autowired
-    public CustomerClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public CustomerClient(RestTemplateBuilder builder) {
+        this.restTemplate = builder.build();
     }
 
     public CustomerDTO getCustomerById(Long customerId) {
