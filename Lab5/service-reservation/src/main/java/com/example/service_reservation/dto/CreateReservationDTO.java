@@ -13,11 +13,11 @@ public class CreateReservationDTO {
     private Long customerId;
     
     @NotNull(message = "Start time is required")
-    @Future(message = "Start time must be in the future")
+//    @Future(message = "Start time must be in the future")
     private LocalDateTime startTime;
     
     @NotNull(message = "End time is required")
-    @Future(message = "End time must be in the future")
+//    @Future(message = "End time must be in the future")
     private LocalDateTime endTime;
     
     private String notes;

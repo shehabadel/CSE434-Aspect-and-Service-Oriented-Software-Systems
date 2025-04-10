@@ -52,14 +52,6 @@ public class ReservationService {
             throw new IllegalArgumentException("End time must be after start time");
         }
         
-        // Check for overlapping reservations
-        List<Reservation> overlapping = reservationRepository.findByStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-                reservationDTO.getEndTime(), reservationDTO.getStartTime());
-        
-        if (!overlapping.isEmpty()) {
-            throw new IllegalStateException("The requested time slot overlaps with existing reservations");
-        }
-        
         Reservation reservation = new Reservation(
                 reservationDTO.getCustomerId(),
                 reservationDTO.getStartTime(),
