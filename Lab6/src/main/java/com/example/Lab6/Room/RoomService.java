@@ -1,5 +1,6 @@
 package com.example.Lab6.Room;
 
+import com.example.Lab6.Annotations.DistributedLock;
 import com.example.Lab6.Redis.RedisClient;
 import com.example.Lab6.Room.dto.CreateRoomDTO;
 import com.example.Lab6.Room.dto.UpdateRoomDTO;
@@ -24,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RoomService {
@@ -38,6 +40,7 @@ public class RoomService {
     
     private static final String ALL_ROOMS_CACHE_KEY = "rooms:all"; // Define cache key
     private static final Duration CACHE_TTL = Duration.ofMinutes(10); // Define cache TTL (e.g., 10 minutes)
+    private static final String ROOM_LOCK_PREFIX = "room";
 
     // Get all rooms with caching
     public List<Room> getAllRooms() {
@@ -104,6 +107,7 @@ public class RoomService {
 
     // Update an existing room
     @Transactional
+    @DistributedLock(keyPrefix = ROOM_LOCK_PREFIX, keyIdentifierExpression = "#id", leaseTime = 120, timeUnit = TimeUnit.SECONDS)
     public Room updateRoom(Long id, UpdateRoomDTO roomDTO) {
         Room existingRoom = roomRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found with id: " + id));
@@ -118,7 +122,23 @@ public class RoomService {
         // Copy non-null properties from DTO to entity
         BeanUtils.copyProperties(roomDTO, existingRoom, getNullPropertyNames(roomDTO));
 
-        return roomRepository.save(existingRoom);
+        // --- Simulate long-running operation ---
+        log.info("Room update for id {}: Starting 3-minute delay...", id);
+        try {
+            TimeUnit.MINUTES.sleep(3); // Wait for 3 minutes
+        } catch (InterruptedException e) {
+            log.warn("Room update for id {}: Sleep interrupted!", id);
+            // Restore the interrupted status
+            Thread.currentThread().interrupt();
+            // Optionally rethrow as a runtime exception if interruption should stop processing
+            // throw new RuntimeException("Update process interrupted", e);
+        }
+        log.info("Room update for id {}: Finished 3-minute delay. Saving...", id);
+        // --- End simulation ---
+
+        Room updatedRoom = roomRepository.save(existingRoom); // Save after the delay
+
+        return updatedRoom; // Return after saving
     }
 
     // Delete a room
